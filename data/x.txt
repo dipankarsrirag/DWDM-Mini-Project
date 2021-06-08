@@ -1,0 +1,3 @@
+/usr/local/Cellar/john-jumbo/1.9.0/share/john/zip2john comp2420-2021-final.zip > comp2420-2021-final.zip.hash
+john --mask=".[A-Z][A-Z][a-z][0-9].[0-9][a-z][0-9][A-Z][A-Z].[a-z].[A-Z]..[a-z][a-z]" comp2420-2021-final.zip.hash
+^WLr6\6u5YL"p&Y#$ka
