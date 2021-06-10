@@ -9,7 +9,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score
+from sklearn.metrics import cohen_kappa_score, roc_auc_score
 
 
 def accuracy(y_true, y_pred):
@@ -44,14 +44,15 @@ def app():
             pred = nb.predict(test_x)
             test_acc = accuracy(test_y, pred)
 
-            model.append(('Naive Bayes From Scratch', test_acc))
+            #model.append(('Naive Bayes From Scratch', [test_acc, cohen_kappa_score(test_y, pred), roc_auc_score(test_y, pred)]))
 
             mnb = MultinomialNB()
             mnb.fit(train_x, train_y)
             pred_mnb = mnb.predict(test_x)
             acc_mnb = accuracy(test_y, pred_mnb)
 
-            model.append(('Naive Bayes from Scikit Learn', acc_mnb))
+            model.append(('Naive Bayes',
+                         [acc_mnb, cohen_kappa_score(test_y, pred_mnb), roc_auc_score(test_y, pred_mnb)]))
         
         if i == 'SVM-Linear':
             svm = SVM.SVM()
@@ -59,14 +60,14 @@ def app():
             pred = svm.predict(test_x)
             test_acc = accuracy(test_y, pred)
 
-            model.append(('SVM From Scratch', test_acc))
+            model.append(('SVM', [test_acc, cohen_kappa_score(test_y, pred), roc_auc_score(test_y, pred)]))
 
             svc = LinearSVC()
             svc.fit(train_x, train_y)
             pred_svc = svc.predict(test_x)
             acc_svc = accuracy(test_y, pred_svc)
 
-            model.append(('SVM From Scikit Learn', acc_svc))            
+            #model.append(('SVM', [acc_svc, cohen_kappa_score(test_y, pred_svc), roc_auc_score(test_y, pred_svc)]))
 
         if i == 'Logistic Regression':
             lr = LR.LogisticRegression()
@@ -74,18 +75,18 @@ def app():
             pred = lr.predict(test_x)
             acc = accuracy(test_y, pred)
 
-            model.append(('Logistic Regression From Scratch', acc))
+            #model.append(('Logistic Regression From Scratch', [acc, cohen_kappa_score(test_y, pred), roc_auc_score(test_y, pred)]))
 
             lr_s = LogisticRegression()
             lr_s.fit(train_x, train_y)
             pred_s = lr_s.predict(test_x)
             acc_s = accuracy(test_y, pred_s)
             
-            model.append(('Logistic Regression From Scikit Learn', acc_s))
+            model.append(('Logistic Regression', [acc_s, cohen_kappa_score(test_y, pred_s), roc_auc_score(test_y, pred_s)]))
             
     acc_dic = dict(model)
-    acc_df = pd.DataFrame(acc_dic, index=range(1)).T
-    acc_df.columns = ['Accuracy Score']
+    acc_df = pd.DataFrame(acc_dic).T
+    acc_df.columns = ['Accuracy Score', "Cohen's Kappa", 'ROC AUC Score']
 
     st.subheader('Performance of each model compared with that of Scikit Learn')
     st.dataframe(acc_df)
